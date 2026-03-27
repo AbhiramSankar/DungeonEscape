@@ -28,11 +28,16 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	void Trigger(bool NewTriggerValue);
+
 	UPROPERTY(EditAnywhere)
 	bool IsPressurePlate = false;
 
 	UPROPERTY(EditAnywhere)
 	AActor* MoverActor;
+
+	UPROPERTY(VisibleAnywhere)
+	bool IsTriggered = false;
 
 	UMover* Mover;
 
