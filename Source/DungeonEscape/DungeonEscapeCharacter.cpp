@@ -10,11 +10,14 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "DungeonEscape.h"
 
+#include "CollectableItem.h"
+#include "Lock.h"
+
 ADungeonEscapeCharacter::ADungeonEscapeCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
-	
+
 	// Create the first person mesh that will be viewed only by this character's owner
 	FirstPersonMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("First Person Mesh"));
 
@@ -45,7 +48,7 @@ ADungeonEscapeCharacter::ADungeonEscapeCharacter()
 }
 
 void ADungeonEscapeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{	
+{
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
@@ -59,10 +62,59 @@ void ADungeonEscapeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 		// Looking/Aiming
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ADungeonEscapeCharacter::LookInput);
 		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &ADungeonEscapeCharacter::LookInput);
+
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ADungeonEscapeCharacter::Interact);
+
 	}
 	else
 	{
 		UE_LOG(LogDungeonEscape, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+	}
+}
+
+void ADungeonEscapeCharacter::Interact()
+{
+	//UE_LOG(LogTemp, Display, TEXT("Interact.........."));
+	FVector Start = FirstPersonCameraComponent->GetComponentLocation();
+	FVector End = Start + (FirstPersonCameraComponent->GetForwardVector() * MaxInteractionDistance);
+	DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 5.0f);
+
+	FCollisionShape InterationSphere = FCollisionShape::MakeSphere(InteractionSphereRadius);
+	DrawDebugSphere(GetWorld(), End, InteractionSphereRadius, 20, FColor::Blue, false, 5.0f);
+	FHitResult HitResult;
+	bool HasHit = GetWorld()->SweepSingleByChannel(HitResult, Start, End, FQuat::Identity, ECC_GameTraceChannel2, InterationSphere);
+
+	if (HasHit) {
+		AActor* HitActor = HitResult.GetActor();
+		//UE_LOG(LogTemp, Display, TEXT("Hit Actor: %s"), *HitActor->GetActorNameOrLabel()); 
+		if (HitActor->ActorHasTag("CollectableItem")) {
+			ACollectableItem* CollectableItem = Cast<ACollectableItem>(HitActor);
+			if (CollectableItem) {
+				ItemList.Add(CollectableItem->ItemName);
+				CollectableItem->Destroy();
+			}
+		}
+		else if (HitActor->ActorHasTag("Lock")) {
+			ALock* Lock = Cast<ALock>(HitActor);
+			if (Lock) {
+				if (!Lock->GetIsKeyPlaced()) {
+					int32 ItemRemoved = ItemList.RemoveSingle(Lock->KeyItemName);
+					if (ItemRemoved) {
+						Lock->SetIsKeyPlaced(true);
+					}
+					else {
+						UE_LOG(LogTemp, Display, TEXT("Key Item not in inventory"));
+					}
+				}
+				else {
+					ItemList.Add(Lock->KeyItemName);
+					Lock->SetIsKeyPlaced(false);
+				}
+			}
+		}
+	}
+	else {
+		UE_LOG(LogTemp, Display, TEXT("No Actor Hit"));
 	}
 }
 
