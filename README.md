@@ -27,7 +27,7 @@ Key learning outcomes include:
 
 ## Engine & Tools
 
-- **Game Engine:** Unreal Engine 5.7
+- **Game Engine:** Unreal Engine 5.7.4
 - **Programming Language:** C++
 - **Platform:** PC (Development)
 - **Starter Content:** Unreal Engine 5.6 Starter Content imported into the UE 5.7 project
