@@ -52,19 +52,6 @@ All assets are used strictly for educational and non-commercial purposes as part
 
 ---
 
-## Lighting & Materials
-
-This project includes a custom dungeon lighting setup designed to create a dark medieval atmosphere while keeping gameplay areas readable for the player.
-
-Lighting and material work includes:
-- Environment lighting setup for dungeon rooms and corridors
-- Point lights and/or local light sources to highlight key gameplay areas
-- Material assignment and adjustment for dungeon meshes
-- Use of Starter Content materials where appropriate
-- Asset and material setup to improve visual consistency across the level
-
----
-
 ## Getting Started
 
 1. Clone the repository.
