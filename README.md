@@ -1,6 +1,6 @@
 # Dungeon Escape
 
-Dungeon Escape is a first-person Unreal Engine 5 game project developed as part of the **Unreal Engine 5 C++ Game Development (Fully Updated in 5.7)** course by **GameDev.tv** on **Udemy**.  
+Dungeon Escape is a first-person Unreal Engine 5 game project developed as part of the **Unreal Engine 5 C++ Game Development (Fully Updated in 5.6)** course by **GameDev.tv** on **Udemy**.  
 The project focuses on learning core Unreal Engine concepts using C++, including player interaction, actor components, collision detection, trigger volumes, lighting setup, material usage, and puzzle-based gameplay mechanics.
 
 Course Link:  
